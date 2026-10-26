@@ -14,16 +14,10 @@ class AturanRewardController extends Controller
 {
     public function index()
     {
-        return view('pages.table', [
-            'title' => 'Aturan Reward Point',
-            'subtitle' => 'Aturan hanya berlaku untuk aktivitas terverifikasi.',
-            'columns' => ['Aturan', 'Kategori', 'Jenis', 'Nilai', 'Batas/hari', 'Status', 'Aksi'],
-            'rows' => AturanReward::with('kategori')->get()->map(fn ($a) => [
-                $a->nama_aturan, $a->kategori?->nama_kategori ?? '-', ucfirst($a->jenis), $a->poin_per_satuan,
-                $a->batas_per_hari ?? '-', ucfirst($a->status),
-                ['post' => route('admin.reward.toggle', $a), 'label' => $a->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan'],
-            ])->all(),
-        ]);
+        $rewards = AturanReward::with('kategori')->get();
+        $kategoris = \App\Models\KategoriSampah::aktif()->get();
+
+        return view('admin.reward', compact('rewards', 'kategoris'));
     }
 
     public function store(Request $request)

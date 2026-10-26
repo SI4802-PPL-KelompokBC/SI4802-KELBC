@@ -11,32 +11,18 @@ class PanduanController extends Controller
 {
     public function index()
     {
-        return view('pages.table', [
-            'title' => 'Panduan Pemilahan Sampah',
-            'subtitle' => 'Pelajari cara memilah dan membuang sampah dengan benar di lingkungan Telkom University.',
-            'columns' => ['Kode', 'Kategori', 'Deskripsi', 'Detail'],
-            'rows' => KategoriSampah::aktif()->get()->map(fn ($k) => [
-                $k->kode, $k->nama_kategori, $k->deskripsi,
-                ['href' => route('panduan.show', $k), 'label' => 'Lihat detail'],
-            ])->all(),
-        ]);
+        $kategoris = KategoriSampah::aktif()->with(['jenis' => fn ($q) => $q->where('diterima', true)])->get();
+
+        return view('pages.panduan', compact('kategoris'));
     }
 
     public function show(KategoriSampah $kategori)
     {
         abort_if($kategori->status !== 'aktif', 404);
 
-        return view('pages.detail', [
-            'title' => 'Sampah ' . $kategori->nama_kategori,
-            'items' => [
-                'Kode' => $kategori->kode,
-                'Deskripsi' => $kategori->deskripsi,
-                'Karakteristik' => $kategori->karakteristik,
-                'Cara penanganan' => $kategori->cara_pembuangan,
-                'Contoh' => $kategori->jenis()->where('diterima', true)->pluck('nama_jenis')->implode(', '),
-            ],
-            'back' => route('panduan.index'),
-        ]);
+        $kategori->load(['jenis' => fn ($q) => $q->where('diterima', true)]);
+
+        return view('pages.panduan-detail', compact('kategori'));
     }
 
     public function cari(Request $request)

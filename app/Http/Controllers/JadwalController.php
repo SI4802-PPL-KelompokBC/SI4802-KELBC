@@ -32,6 +32,13 @@ class JadwalController extends Controller
         ]);
     }
 
+    public function pengingat()
+    {
+        return view('pages.pengingat', [
+            'pengingat' => auth()->user()->pengingat()->with('jadwal.kategori')->get(),
+        ]);
+    }
+
     public function simpanPengingat(Request $request)
     {
         $data = $request->validate([
