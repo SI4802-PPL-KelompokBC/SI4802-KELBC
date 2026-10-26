@@ -43,7 +43,8 @@ Route::middleware('auth')->group(function () {
 
         // PBI-08/09 Jadwal & pengingat
         Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
-        Route::post('/jadwal/pengingat', [JadwalController::class, 'simpanPengingat'])->name('jadwal.pengingat');
+        Route::get('/jadwal/pengingat', [JadwalController::class, 'pengingat'])->name('jadwal.pengingat');
+        Route::post('/jadwal/pengingat', [JadwalController::class, 'simpanPengingat'])->name('jadwal.pengingat.simpan');
 
         // PBI-11/12 Peta
         Route::get('/peta', [PetaController::class, 'index'])->name('peta.index');

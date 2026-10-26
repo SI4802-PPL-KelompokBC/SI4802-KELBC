@@ -9,18 +9,17 @@ use Illuminate\Http\Request;
 /** PBI-07 - CRUD jadwal pengangkutan (admin). */
 class JadwalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('pages.table', [
-            'title' => 'Kelola Jadwal Pengangkutan',
-            'subtitle' => 'Jadwal yang tidak berlaku dinonaktifkan, bukan dihapus.',
-            'columns' => ['Kategori', 'Lokasi', 'Hari', 'Jam angkut', 'Status', 'Aksi'],
-            'rows' => JadwalPengangkutan::with(['kategori', 'lokasi'])->get()->map(fn ($j) => [
-                $j->kategori->nama_kategori, $j->lokasi->nama_lokasi, $j->hari ?? 'Siklus 3 hari',
-                substr($j->jam_angkut, 0, 5), ucfirst($j->status),
-                ['post' => route('admin.jadwal.toggle', $j), 'label' => $j->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan'],
-            ])->all(),
-        ]);
+        $status = $request->query('status');
+        $schedules = JadwalPengangkutan::with(['kategori', 'lokasi'])
+            ->when($status, fn ($q) => $q->where('status', $status))
+            ->get();
+
+        $kategoris = \App\Models\KategoriSampah::aktif()->get();
+        $lokasis = \App\Models\LokasiTempatSampah::aktif()->get();
+
+        return view('admin.jadwal', compact('schedules', 'kategoris', 'lokasis'));
     }
 
     public function store(Request $request)

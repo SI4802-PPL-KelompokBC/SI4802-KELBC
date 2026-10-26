@@ -12,15 +12,9 @@ class KategoriController extends Controller
 {
     public function index()
     {
-        return view('pages.table', [
-            'title' => 'Kelola Kategori Sampah',
-            'subtitle' => 'Tambah, ubah, atau nonaktifkan kategori yang tampil di panduan dan pencarian.',
-            'columns' => ['Kode', 'Kategori', 'Status', 'Aksi'],
-            'rows' => KategoriSampah::all()->map(fn ($k) => [
-                $k->kode, $k->nama_kategori, ucfirst($k->status),
-                ['post' => route('admin.kategori.toggle', $k), 'label' => $k->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan'],
-            ])->all(),
-        ]);
+        $kategoris = KategoriSampah::withCount(['jenis', 'jadwal'])->get();
+
+        return view('admin.kategori', compact('kategoris'));
     }
 
     public function store(Request $request)

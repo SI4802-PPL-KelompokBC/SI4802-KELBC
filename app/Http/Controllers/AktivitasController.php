@@ -118,7 +118,7 @@ class AktivitasController extends Controller
             ->exists();
 
         if (! $diterima) {
-            abort(back()->withErrors(['id_lokasi' => 'Titik ini tidak menerima kategori yang dipilih.'])->withInput());
+            return back()->withErrors(['id_lokasi' => 'Titik ini tidak menerima kategori yang dipilih.'])->withInput();
         }
 
         unset($data['pernyataan'], $data['foto_bukti']);
