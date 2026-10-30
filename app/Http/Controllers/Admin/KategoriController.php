@@ -19,23 +19,29 @@ class KategoriController extends Controller
 
     public function store(Request $request)
     {
-        KategoriSampah::create($this->rules($request) + ['status' => 'aktif']);
+        $data = $this->rules($request);
+        $data['status'] = $request->has('status') ? 'aktif' : 'nonaktif';
+        
+        KategoriSampah::create($data);
 
-        return back()->with('status', 'Kategori ditambahkan.');
+        return back()->with('status', 'Kategori berhasil ditambahkan.');
     }
 
     public function update(Request $request, KategoriSampah $kategori)
     {
-        $kategori->update($this->rules($request, $kategori));
+        $data = $this->rules($request, $kategori);
+        $data['status'] = $request->has('status') ? 'aktif' : 'nonaktif';
+        
+        $kategori->update($data);
 
-        return back()->with('status', 'Kategori diperbarui.');
+        return back()->with('status', 'Kategori berhasil diperbarui.');
     }
 
     public function toggle(KategoriSampah $kategori)
     {
         $kategori->update(['status' => $kategori->status === 'aktif' ? 'nonaktif' : 'aktif']);
 
-        return back()->with('status', 'Status kategori diperbarui.');
+        return back()->with('status', 'Status kategori berhasil diperbarui.');
     }
 
     private function rules(Request $request, ?KategoriSampah $k = null): array
@@ -44,9 +50,9 @@ class KategoriController extends Controller
             'nama_kategori' => ['required', 'string', 'max:50'],
             'kode' => ['required', 'string', 'max:10', Rule::unique('kategori_sampah', 'kode')->ignore($k?->id_kategori, 'id_kategori')],
             'warna_label' => ['nullable', 'string', 'max:20'],
-            'deskripsi' => ['nullable', 'string'],
+            'deskripsi' => ['required', 'string'],
             'karakteristik' => ['nullable', 'string'],
-            'cara_pembuangan' => ['nullable', 'string'],
+            'cara_pembuangan' => ['required', 'string'],
         ]);
     }
 }

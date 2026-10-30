@@ -11,6 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- TAMBAHKAN ALPINE.JS DI SINI -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     @stack('head')
 </head>
 <body class="h-full font-sans text-slate-800 antialiased selection:bg-emerald-600 selection:text-white bg-slate-50 overflow-hidden">
